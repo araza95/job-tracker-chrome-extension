@@ -1,14 +1,25 @@
-import "./App.css";
-import { Button } from "./components/ui/button";
+// src/App.tsx
+import React from "react";
 
 function App() {
+  const [count, setCount] = React.useState(0);
+
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
-      <h2 className="text-2xl font-bold text-gray-800">Tailwind Card</h2>
-      <p className="text-gray-600 mt-3">
-        This is a simple card layout built with Tailwind CSS.
-      </p>
-      <Button>Click me</Button>
+    <div className="w-[400px] h-[500px] p-4 bg-white">
+      <h1 className="text-xl font-bold text-blue-600">
+        Job Application Tracker
+      </h1>
+
+      <div className="mt-4 p-4 border rounded-lg">
+        <p className="text-gray-600">Test Counter: {count}</p>
+
+        <button
+          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          onClick={() => setCount((c) => c + 1)}
+        >
+          Increment
+        </button>
+      </div>
     </div>
   );
 }

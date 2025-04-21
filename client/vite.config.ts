@@ -10,4 +10,19 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    outDir: "dist",
+    rollupOptions: {
+      input: {
+        main: "index.html",
+      },
+    },
+  },
+  server: {
+    port: 3000,
+    strictPort: true,
+    hmr: {
+      port: 3000,
+    },
+  },
 });

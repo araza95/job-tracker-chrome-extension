@@ -1,0 +1,18 @@
+{
+    "manifest_version": 3,
+    "name": "Job Application Tracker",
+    "version": "0.1.0",
+    "description": "Track job applications and sync with Google Sheets",
+    "permissions": [
+        "activeTab",
+        "storage",
+        "identity"
+    ],
+    "action": {
+        "default_popup": "index.html",
+        "default_title": "Job Tracker"
+    },
+    "host_permissions": [
+        "https://*.google.com/*"
+    ]
+}
