@@ -5,7 +5,13 @@ export interface JobApplication {
   location: string;
   description: string;
   appliedDate: string;
-  status: "applied" | "interviewing" | "offered" | "rejected";
+  status: JOB_APPLICATION_STATUS;
   url?: string;
   notes?: string;
 }
+
+export type JOB_APPLICATION_STATUS =
+  | "applied"
+  | "interviewing"
+  | "offered"
+  | "rejected";
