@@ -1,4 +1,5 @@
 import "./App.css";
+import { Button } from "./components/ui/button";
 
 function App() {
   return (
@@ -7,9 +8,7 @@ function App() {
       <p className="text-gray-600 mt-3">
         This is a simple card layout built with Tailwind CSS.
       </p>
-      <button className="bg-red-500 hover:bg-blue-700 text-red-700 font-bold py-2 px-4 rounded mt-4">
-        Learn More
-      </button>
+      <Button>Click me</Button>
     </div>
   );
 }
