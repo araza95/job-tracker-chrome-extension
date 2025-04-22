@@ -1,4 +1,5 @@
 // src/components/layout/PopupLayout.tsx
+import { useEffect } from "react";
 import {
   Tabs,
   TabsList,
@@ -12,7 +13,11 @@ import { Settings } from "../settings";
 import { SheetConnect } from "../sheet/sheet-connect";
 
 export const PopupLayout = () => {
-  const { isConnected, isLoading } = useSheetStore();
+  const { isConnected, isLoading, loadFromStorage } = useSheetStore();
+
+  useEffect(() => {
+    loadFromStorage();
+  }, []);
 
   // Show loader while checking connection
   if (isLoading) {

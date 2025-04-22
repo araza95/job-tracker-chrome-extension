@@ -23,12 +23,19 @@ export const SheetConnect = () => {
         </div>
 
         <div className="space-y-4">
-          <Input
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://docs.google.com/spreadsheets/d/..."
-            disabled={isLoading}
-          />
+          <div>
+            <Input
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://docs.google.com/spreadsheets/d/..."
+              disabled={isLoading}
+            />
+            {url && !url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/) && (
+              <p className="text-red-500 text-sm mt-1">
+                Invalid Google Sheets URL format
+              </p>
+            )}
+          </div>
 
           <Button
             onClick={handleConnect}
