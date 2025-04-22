@@ -1,6 +1,7 @@
 import { sheets } from '../config/google-sheets.config';
 import { SheetData } from '../types';
 import { extractSpreadsheetId } from '../utils/extract-sheet-id';
+import { rowsToObjects } from '../utils/filter-GCP-sheet-data';
 
 /**
  * @description Fetches data from a Google Sheet using the provided URL.
@@ -24,10 +25,13 @@ export async function getSheetData({
       range: 'Sheet1', // Default sheet name
     });
 
+    const rows: any[][] = response.data.values ?? [];
+    const objects = rowsToObjects({ rows });
+
     return {
       spreadsheetId,
       range: response.data.range || 'Sheet1',
-      values: response.data.values || [],
+      rows: objects,
     };
   } catch (error: any) {
     throw new Error(`Failed to fetch sheet data: ${error.message}`);

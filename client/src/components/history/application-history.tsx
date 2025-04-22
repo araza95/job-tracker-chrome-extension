@@ -1,72 +1,36 @@
-import { useEffect, useState } from "react";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { ScrollArea } from "../../components/ui/scroll-area";
+// src/components/history/application-history.tsx
+import { useState } from "react";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { ScrollArea } from "../ui/scroll-area";
+import { useSheetStore } from "../../store/sheet-connect";
 
-type Application = {
-  id: string;
-  companyName: string;
-  jobTitle: string;
-  jobUrl: string;
-  status: string;
-  notes: string;
-  appliedDate: string;
-};
+interface Application {
+  "Company Name": string;
+  "Job title": string;
+  Status: string;
+  "Applied on": string;
+  "Job posted on": string;
+  "Recruiter name": string;
+  Link: string | null;
+}
 
 export const ApplicationHistory = () => {
-  const [applications, setApplications] = useState<Application[]>([]);
+  const { sheetData } = useSheetStore();
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading] = useState(false);
 
-  useEffect(() => {
-    // In a real implementation, you would fetch data from storage
-    // For now, we'll use mock data
-    const mockData: Application[] = [
-      {
-        id: "1",
-        companyName: "Tech Solutions Inc.",
-        jobTitle: "Frontend Developer",
-        jobUrl: "https://example.com/job/1",
-        status: "applied",
-        notes: "Applied through company website",
-        appliedDate: "2023-06-15",
-      },
-      {
-        id: "2",
-        companyName: "Digital Innovations",
-        jobTitle: "React Developer",
-        jobUrl: "https://example.com/job/2",
-        status: "interviewing",
-        notes: "First interview scheduled for next week",
-        appliedDate: "2023-06-10",
-      },
-      {
-        id: "3",
-        companyName: "WebTech Systems",
-        jobTitle: "Full Stack Engineer",
-        jobUrl: "https://example.com/job/3",
-        status: "rejected",
-        notes: "Received rejection email",
-        appliedDate: "2023-06-05",
-      },
-    ];
-
-    // Simulate loading
-    setTimeout(() => {
-      setApplications(mockData);
-      setIsLoading(false);
-    }, 500);
-  }, []);
-
-  const filteredApplications = applications.filter(
+  // Filter applications based on search term
+  const filteredApplications = ((sheetData as Application[]) || []).filter(
     (app) =>
-      app.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      app.jobTitle.toLowerCase().includes(searchTerm.toLowerCase())
+      app["Company Name"].toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app["Job title"].toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    const statusLower = status.toLowerCase();
+    switch (statusLower) {
       case "interested":
         return "bg-blue-100 text-blue-800";
       case "applied":
@@ -77,10 +41,26 @@ export const ApplicationHistory = () => {
         return "bg-green-100 text-green-800";
       case "rejected":
         return "bg-red-100 text-red-800";
-      case "accepted":
+      case "not a fit":
+        return "bg-gray-100 text-gray-800";
+      case "recommendation":
         return "bg-emerald-100 text-emerald-800";
       default:
         return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "N/A";
+    try {
+      // Assuming date format is DD.MM.YYYY
+      const [day, month, year] = dateString.split(".");
+      return new Date(`${year}-${month}-${day}`).toLocaleDateString();
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error formatting date:", error.message);
+        return dateString; // Return original string if parsing fails
+      }
     }
   };
 
@@ -89,7 +69,7 @@ export const ApplicationHistory = () => {
       <div className="relative">
         <Input
           type="search"
-          placeholder="Search applications..."
+          placeholder="Search by company or job title..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-9"
@@ -135,55 +115,68 @@ export const ApplicationHistory = () => {
       ) : (
         <ScrollArea className="h-[320px]">
           <div className="space-y-3">
-            {filteredApplications.map((app) => (
+            {filteredApplications.map((app, index) => (
               <div
-                key={app.id}
+                key={index}
                 className="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-medium text-sm">{app.jobTitle}</h3>
+                    <h3 className="font-medium text-sm">{app["Job title"]}</h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {app.companyName}
+                      {app["Company Name"]}
                     </p>
                   </div>
-                  <Badge className={getStatusColor(app.status)}>
-                    {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                  <Badge className={getStatusColor(app["Status"])}>
+                    {app["Status"]}
                   </Badge>
                 </div>
                 <div className="mt-2 flex justify-between items-center">
-                  <span className="text-xs text-gray-500">
-                    Applied: {new Date(app.appliedDate).toLocaleDateString()}
-                  </span>
+                  <div className="space-y-1">
+                    <span className="text-xs text-gray-500 block">
+                      Applied: {formatDate(app["Applied on"])}
+                    </span>
+                    <span className="text-xs text-gray-500 block">
+                      Posted: {formatDate(app["Job posted on"])}
+                    </span>
+                    {app["Recruiter name"] &&
+                      app["Recruiter name"] !== "N/A" && (
+                        <span className="text-xs text-gray-500 block">
+                          Recruiter: {app["Recruiter name"]}
+                        </span>
+                      )}
+                  </div>
                   <div className="flex space-x-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 w-7 p-0"
-                      onClick={() => window.open(app.jobUrl, "_blank")}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                    {app["Link"] && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 w-7 p-0"
+                        // onClick={() => window.open(app["Link"], "_blank")}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                        />
-                      </svg>
-                    </Button>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                          />
+                        </svg>
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"
                       className="h-7 w-7 p-0"
                       onClick={() => {
                         // Edit functionality would go here
-                        console.log("Edit application:", app.id);
+                        console.log("Edit application:", app);
                       }}
                     >
                       <svg

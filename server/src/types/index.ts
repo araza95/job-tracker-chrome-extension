@@ -1,7 +1,7 @@
 export interface SheetData {
   spreadsheetId: string;
   range: string;
-  values: any[][];
+  rows: Record<string, any>[];
 }
 
 export interface ApiResponse<T> {

@@ -5,11 +5,29 @@ import {
   TabsTrigger,
   TabsContent,
 } from "../../components/ui/tabs";
+import { useSheetStore } from "../../store/sheet-connect";
 import { NewApplicationForm } from "../form/new-application-form";
 import { ApplicationHistory } from "../history/application-history";
 import { Settings } from "../settings";
+import { SheetConnect } from "../sheet/sheet-connect";
 
 export const PopupLayout = () => {
+  const { isConnected, isLoading } = useSheetStore();
+
+  // Show loader while checking connection
+  if (isLoading) {
+    return (
+      <div className="w-[400px] h-[500px] flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  // Show connect screen if not connected
+  if (!isConnected) {
+    return <SheetConnect />;
+  }
+
   return (
     <div className="w-[95%] mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden flex flex-col">
       <header className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
