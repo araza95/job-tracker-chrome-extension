@@ -24,31 +24,31 @@ export const PopupLayout = () => {
   // Show loader while checking connection
   if (isLoading) {
     return (
-      <div className="">
-        <SpreadsheetLoader isLoading={isLoading} />;
+      <div className="w-[600px] h-[600px] overflow-hidden">
+        <SpreadsheetLoader isLoading={isLoading} />
       </div>
     );
   }
 
-  // Show connect screen if not connected
   if (!isConnected) {
-    return <SheetConnect />;
+    return (
+      <div className="w-[600px] h-[600px] overflow-hidden">
+        <SheetConnect />
+      </div>
+    );
   }
 
   return (
-    <div className="w-[700px] bg-[#171923] text-white overflow-hidden flex flex-col shadow">
-      <SheetStatusBar />
-      <header className="p-4 border-b border-[#2D3748] bg-[#1A202C] shadow-sm">
+    <div className="w-[600px] h-[600px] bg-[#171923] text-white overflow-hidden flex flex-col">
+      <header className="p-4 border-b border-[#2D3748] bg-[#1A202C] shadow-sm flex-shrink-0">
         <h1 className="text-xl font-semibold text-center flex items-center justify-center gap-2">
           Job Application Tracker
         </h1>
       </header>
+      <SheetStatusBar />
 
-      <Tabs
-        defaultValue="new"
-        className="w-full flex-1 flex flex-col overflow-hidden"
-      >
-        <TabsList className="w-full grid grid-cols-3 gap-2 p-2 bg-[#1A202C] border-b border-[#2D3748] h-fit">
+      <Tabs defaultValue="new" className="flex-1 flex flex-col min-h-0">
+        <TabsList className="h-fit w-full grid grid-cols-3 gap-2 p-2 bg-[#1A202C] border-b border-[#2D3748] flex-shrink-0">
           <TabsTrigger
             value="new"
             className="data-[state=active]:bg-[#44337A] data-[state=active]:text-[#E9D8FD] data-[state=active]:shadow-sm"
@@ -78,7 +78,7 @@ export const PopupLayout = () => {
           </TabsTrigger>
         </TabsList>
 
-        <div className="flex-1 overflow-auto bg-[#171923]">
+        <div className="flex-1 overflow-hidden bg-[#171923]">
           <TabsContent value="new" className="h-full p-4 overflow-y-auto">
             <NewApplicationForm />
           </TabsContent>

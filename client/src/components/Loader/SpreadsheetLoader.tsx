@@ -18,7 +18,7 @@ export default function SpreadsheetLoader({ isLoading = true }) {
   }
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#171923]">
+    <div className="w-[600px] h-[600px] flex items-center justify-center bg-[#171923]">
       <div className="relative flex items-center justify-center">
         {/* Outer circle with slow pulse */}
         <div
@@ -39,9 +39,11 @@ export default function SpreadsheetLoader({ isLoading = true }) {
         ></div>
 
         {/* Content container */}
-        <div className="z-10 text-center">
-          <h2 className="text-4xl font-bold text-white mb-2">Connecting...</h2>
-          <p className="text-[#E9D8FD]">
+        <div className="z-10 text-center space-y-3">
+          <h2 className="text-3xl font-extrabold text-white tracking-wide font-sans">
+            Connecting...
+          </h2>
+          <p className="text-[#E9D8FD] text-base font-medium font-sans leading-relaxed">
             Hang on tight! We are connecting to your Google Sheet.
           </p>
         </div>

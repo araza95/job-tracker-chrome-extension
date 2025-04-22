@@ -1,29 +1,36 @@
 import React, { useState } from "react";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Textarea } from "../../components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../components/ui/select";
-import { JOB_APPLICATION_STATUS, JobApplication } from "../../types";
+  JOB_APPLICATION_PLATFORM,
+  JOB_APPLICATION_RECOMMENDATION,
+  JOB_APPLICATION_STATUS,
+  JobApplication,
+} from "../../types";
+import { Button } from "../ui/button";
+import { FormField } from "./form-field";
+import { StatusSelect } from "./status-select";
+import {
+  JOB_STATUS_OPTIONS,
+  PLATFORM_OPTIONS,
+  RECOMMENDATION_OPTIONS,
+} from "../../types";
+
+const initialFormState: JobApplication = {
+  companyName: "",
+  jobTitle: "",
+  url: "",
+  status: "applied",
+  notes: "",
+  appliedDate: new Date().toISOString().split("T")[0],
+  platform: "company-portal",
+  postingDate: "",
+  description: "",
+  recommendation: "no",
+  location: "",
+  id: "",
+};
 
 export const NewApplicationForm = () => {
-  const [formData, setFormData] = useState<JobApplication>({
-    companyName: "",
-    jobTitle: "",
-    status: "applied",
-    notes: "",
-    appliedDate: "",
-    description: "",
-    id: "",
-    location: "",
-    url: "",
-  });
+  const [formData, setFormData] = useState<JobApplication>(initialFormState);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -32,161 +39,152 @@ export const NewApplicationForm = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleStatusChange = (value: JOB_APPLICATION_STATUS) => {
-    setFormData((prev) => ({ ...prev, status: value }));
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement form submission logic
     console.log("Form submitted:", formData);
-
-    // Reset form after submission
-    setFormData({
-      id: "",
-      companyName: "",
-      jobTitle: "",
-      url: "",
-      status: "applied",
-      notes: "",
-      appliedDate: "",
-      description: "",
-      location: "",
-    });
+    setFormData(initialFormState);
   };
 
   const handleAutoFill = () => {
-    // This function would be used to auto-fill form data from the current page
-    // You'll need to implement Chrome extension API calls here
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      // Example: Get the current URL
       const currentUrl = tabs[0].url || "";
       setFormData((prev) => ({ ...prev, url: currentUrl }));
-
-      // You would need to implement more logic to extract company name, job title, etc.
-      // This might involve sending a message to a content script to scrape the page
     });
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 bg-[#171923] p-4 rounded-lg"
-    >
-      <div className="flex justify-end">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={handleAutoFill}
-          className="text-xs flex items-center gap-1"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-3.5 w-3.5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 01-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 1a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-2 0V6.414l-2.293 2.293a1 1 0 11-1.414-1.414L13.586 5H12zm-9 7a1 1 0 012 0v1.586l2.293-2.293a1 1 0 111.414 1.414L6.414 15H8a1 1 0 010 2H4a1 1 0 01-1-1v-4zm13-1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h1.586l-2.293-2.293a1 1 0 111.414-1.414L15 13.586V12a1 1 0 011-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Auto-fills
-        </Button>
-      </div>
-
-      <section className="grid grid-cols-2 gap-2">
-        <div className="space-y-2 col-span-1">
-          <Label className="text-[#E9D8FD]" htmlFor="companyName">
-            Company Name
-          </Label>
-          <Input
-            className="bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]"
-            id="companyName"
+    <form onSubmit={handleSubmit} className="h-full flex flex-col gap-4">
+      <div className="flex-1 overflow-y-auto pr-2">
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            label="Company Name"
             name="companyName"
             value={formData.companyName}
             onChange={handleChange}
-            placeholder="e.g. Acme Inc."
-            required
+            tooltip="Name of the company you're applying to"
           />
-        </div>
 
-        <div className="space-y-2 col-span-1">
-          <Label className="text-[#E9D8FD]" htmlFor="jobTitle">
-            Job Title
-          </Label>
-          <Input
-            className="bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]"
-            id="jobTitle"
+          <FormField
+            label="Location"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            tooltip="Job location (remote/hybrid/on-site)"
+          />
+
+          <FormField
+            label="Job Title"
             name="jobTitle"
             value={formData.jobTitle}
             onChange={handleChange}
-            placeholder="e.g. Frontend Developer"
-            required
+            tooltip="Position title you're applying for"
+            className="col-span-2"
           />
-        </div>
 
-        <div className="space-y-2 col-span-1">
-          <Label className="text-[#E9D8FD]" htmlFor="jobUrl">
-            Job URL
-          </Label>
-          <Input
-            className="bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]"
-            id="jobUrl"
-            name="jobUrl"
-            value={formData.url}
+          <FormField
+            label="Posting Date"
+            name="postingDate"
+            type="date"
+            value={formData.postingDate}
             onChange={handleChange}
-            placeholder="https://..."
-            required
+            tooltip="When the job was posted"
           />
-        </div>
 
-        <div className="space-y-2 col-span-1 ">
-          <Label className="text-[#E9D8FD]" htmlFor="status">
-            Application Status
-          </Label>
-          <Select value={formData.status} onValueChange={handleStatusChange}>
-            <SelectTrigger
-              id="status"
-              className="w-full bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]
-            "
-            >
-              <SelectValue placeholder="Select status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="interested">Interested</SelectItem>
-              <SelectItem value="applied">Applied</SelectItem>
-              <SelectItem value="interviewing">Interviewing</SelectItem>
-              <SelectItem value="offered">Offered</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-              <SelectItem value="accepted">Accepted</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+          <StatusSelect
+            label="Recommendation"
+            value={formData.recommendation}
+            onValueChange={(value) =>
+              setFormData((prev) => ({
+                ...prev,
+                recommendation: value as JOB_APPLICATION_RECOMMENDATION,
+              }))
+            }
+            options={RECOMMENDATION_OPTIONS}
+            tooltip="Are you recommended for this job?"
+          />
 
-        <div className="space-y-2 col-span-2">
-          <Label className="text-[#E9D8FD]" htmlFor="notes">
-            Job Description
-          </Label>
-          <Textarea
-            id="notes"
-            name="notes"
+          <StatusSelect
+            label="Status"
+            value={formData.status}
+            onValueChange={(value) =>
+              setFormData((prev) => ({
+                ...prev,
+                status: value as JOB_APPLICATION_STATUS,
+              }))
+            }
+            options={JOB_STATUS_OPTIONS}
+            tooltip="Current status of your application"
+          />
+
+          <StatusSelect
+            label="Platform"
+            value={formData.platform}
+            onValueChange={(value) =>
+              setFormData((prev) => ({
+                ...prev,
+                platform: value as JOB_APPLICATION_PLATFORM,
+              }))
+            }
+            options={PLATFORM_OPTIONS}
+            tooltip="Platform where you applied"
+          />
+
+          <FormField
+            label="Applied Date"
+            name="appliedDate"
+            type="date"
+            value={formData.appliedDate}
+            onChange={handleChange}
+            tooltip="Date when you submitted your application"
+          />
+
+          <FormField
+            label="Job URL"
+            name="url"
+            type="url"
+            value={formData.url as string}
+            onChange={handleChange}
+            tooltip="Link to the job posting"
+          />
+
+          <FormField
+            label="Description"
+            name="description"
             value={formData.description}
             onChange={handleChange}
-            placeholder="Add any notes about this application..."
-            className="min-h-[80px] bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]"
+            type="textarea"
+            className="col-span-2"
+            tooltip="Job description and requirements"
+          />
+
+          <FormField
+            label="Notes"
+            name="notes"
+            value={formData.notes as string}
+            onChange={handleChange}
+            type="textarea"
+            className="col-span-2"
+            tooltip="Your personal notes about the application"
           />
         </div>
-      </section>
+      </div>
 
-      <Button
-        type="submit"
-        className="w-full bg-[#6B46C1] hover:bg-[#553C9A] text-white"
-      >
-        Save Application
-      </Button>
+      <div className="flex-shrink-0 space-y-4 pt-4 border-t border-[#2D3748]">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleAutoFill}
+          className="w-full border-[#2D3748] text-[#E9D8FD] hover:bg-[#1A202C]"
+        >
+          Auto-fill from current page
+        </Button>
+        <Button
+          type="submit"
+          className="w-full bg-[#6B46C1] hover:bg-[#553C9A] text-white"
+        >
+          Submit Application
+        </Button>
+      </div>
     </form>
   );
 };

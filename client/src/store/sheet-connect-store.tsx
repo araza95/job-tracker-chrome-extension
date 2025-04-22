@@ -11,6 +11,7 @@ interface SheetState {
   connectSheet: (url: string) => Promise<void>;
   loadFromStorage: () => Promise<void>;
   disconnect: () => Promise<void>;
+  refreshHistory: () => Promise<void>;
 }
 
 export const useSheetStore = create<SheetState>((set) => ({
@@ -22,7 +23,7 @@ export const useSheetStore = create<SheetState>((set) => ({
 
   connectSheet: async (url: string) => {
     try {
-      set({ isLoading: true, error: null });
+      // set({ isLoading: true, error: null });
       const response = await fetch("http://localhost:3001/api/sheets/connect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -48,6 +49,40 @@ export const useSheetStore = create<SheetState>((set) => ({
           error: error.message,
           isLoading: false,
           isConnected: false,
+        });
+      }
+    }
+  },
+
+  refreshHistory: async () => {
+    try {
+      const sheetUrl = await chromeStorage.get<string>("sheetUrl");
+
+      if (!sheetUrl) {
+        throw new Error("No sheet URL found");
+      }
+
+      const response = await fetch("http://localhost:3001/api/sheets/connect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sheetUrl }),
+      });
+
+      const data = await response.json();
+      if (!data.success) throw new Error(data.error);
+
+      set({
+        sheetData: data.data.rows,
+        isLoading: false,
+      });
+
+      // Update storage with fresh data
+      await chromeStorage.set("sheetData", data.data.rows);
+    } catch (error) {
+      if (error instanceof Error) {
+        set({
+          error: error.message,
+          isLoading: false,
         });
       }
     }

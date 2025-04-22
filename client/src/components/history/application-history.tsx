@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { ScrollArea } from "../ui/scroll-area";
 import { useSheetStore } from "../../store/sheet-connect-store";
+import { Search, RefreshCcw, ExternalLink, Edit, FileText } from "lucide-react";
 
 interface Application {
   "Company Name": string;
@@ -17,9 +18,9 @@ interface Application {
 }
 
 export const ApplicationHistory = () => {
-  const { sheetData } = useSheetStore();
+  const { sheetData, refreshHistory } = useSheetStore();
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Filter applications based on search term
   const filteredApplications = ((sheetData as Application[]) || []).filter(
@@ -64,61 +65,64 @@ export const ApplicationHistory = () => {
     }
   };
 
+  const refresh = async () => {
+    try {
+      setIsLoading(true);
+      await refreshHistory();
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error refreshing history:", error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="space-y-4">
-      <div className="relative">
-        <Input
-          type="search"
-          placeholder="Search by company or job title..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-9 bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]"
-        />
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+    <div className="h-full flex flex-col">
+      <div className="flex-shrink-0 space-y-4 p-4 bg-[#171923] z-50 border-b border-[#2D3748]">
+        <div className="relative">
+          <Input
+            type="search"
+            placeholder="Search by company or job title..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9 bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]"
           />
-        </svg>
+          <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-[#E9D8FD]">Applications</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={refresh}
+            className="hover:bg-[#2D3748] transition-colors"
+          >
+            <RefreshCcw
+              className={`h-4 w-4 text-[#E9D8FD] ${isLoading ? "animate-spin" : "hover:rotate-180 transition-transform duration-500"}`}
+            />
+          </Button>
+        </div>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        </div>
-      ) : filteredApplications.length === 0 ? (
-        <div className="text-center py-10 text-gray-500">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-10 w-10 mx-auto mb-2 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
-          </svg>
-          <p>No applications found</p>
-        </div>
-      ) : (
-        <ScrollArea className="h-[320px]">
-          <div className="space-y-3">
-            {filteredApplications.map((app, index) => (
+      <ScrollArea className="flex-1 relative">
+        <div className="p-4 space-y-2">
+          {isLoading ? (
+            <div className="h-[400px] flex justify-center items-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#6B46C1]"></div>
+            </div>
+          ) : filteredApplications.length === 0 ? (
+            <div className="h-[400px] flex flex-col items-center justify-center text-[#E9D8FD]">
+              <FileText className="h-12 w-12 mb-4 text-[#44337A]" />
+              <p>No applications found</p>
+            </div>
+          ) : (
+            filteredApplications.map((app, index) => (
               <div
                 key={index}
-                className=" bg-[#1A202C] p-4 border border-[#2D3748] rounded-lg dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-[#1A202C] p-4 border border-[#2D3748] rounded-lg shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex justify-between items-start">
                   <div>
@@ -153,56 +157,29 @@ export const ApplicationHistory = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-7 w-7 p-0"
+                        className="h-7 w-7 p-0 hover:bg-[#2D3748] transition-colors"
                         // onClick={() => window.open(app["Link"], "_blank")}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                          />
-                        </svg>
+                        <ExternalLink className="h-4 w-4" />
                       </Button>
                     )}
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 w-7 p-0"
+                      className="h-7 w-7 p-0 hover:bg-[#2D3748] transition-colors"
                       onClick={() => {
-                        // Edit functionality would go here
                         console.log("Edit application:", app);
                       }}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                        />
-                      </svg>
+                      <Edit className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </ScrollArea>
-      )}
+            ))
+          )}
+        </div>
+      </ScrollArea>
     </div>
   );
 };
