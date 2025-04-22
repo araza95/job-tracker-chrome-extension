@@ -4,7 +4,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { ScrollArea } from "../ui/scroll-area";
-import { useSheetStore } from "../../store/sheet-connect";
+import { useSheetStore } from "../../store/sheet-connect-store";
 
 interface Application {
   "Company Name": string;
@@ -72,7 +72,7 @@ export const ApplicationHistory = () => {
           placeholder="Search by company or job title..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-9"
+          className="pl-9 bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]"
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -118,11 +118,13 @@ export const ApplicationHistory = () => {
             {filteredApplications.map((app, index) => (
               <div
                 key={index}
-                className="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow"
+                className=" bg-[#1A202C] p-4 border border-[#2D3748] rounded-lg dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-medium text-sm">{app["Job title"]}</h3>
+                    <h3 className="text-[#E9D8FD] font-medium">
+                      {app["Job title"]}
+                    </h3>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       {app["Company Name"]}
                     </p>
@@ -133,15 +135,15 @@ export const ApplicationHistory = () => {
                 </div>
                 <div className="mt-2 flex justify-between items-center">
                   <div className="space-y-1">
-                    <span className="text-xs text-gray-500 block">
+                    <span className="text-[#A0AEC0] text-sm block">
                       Applied: {formatDate(app["Applied on"])}
                     </span>
-                    <span className="text-xs text-gray-500 block">
+                    <span className="text-[#A0AEC0] text-sm block">
                       Posted: {formatDate(app["Job posted on"])}
                     </span>
                     {app["Recruiter name"] &&
                       app["Recruiter name"] !== "N/A" && (
-                        <span className="text-xs text-gray-500 block">
+                        <span className="text-[#A0AEC0] text-sm block">
                           Recruiter: {app["Recruiter name"]}
                         </span>
                       )}

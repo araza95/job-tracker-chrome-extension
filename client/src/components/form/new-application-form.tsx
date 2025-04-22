@@ -69,7 +69,10 @@ export const NewApplicationForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 bg-[#171923] p-4 rounded-lg"
+    >
       <div className="flex justify-end">
         <Button
           type="button"
@@ -96,8 +99,11 @@ export const NewApplicationForm = () => {
 
       <section className="grid grid-cols-2 gap-2">
         <div className="space-y-2 col-span-1">
-          <Label htmlFor="companyName">Company Name</Label>
+          <Label className="text-[#E9D8FD]" htmlFor="companyName">
+            Company Name
+          </Label>
           <Input
+            className="bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]"
             id="companyName"
             name="companyName"
             value={formData.companyName}
@@ -108,8 +114,11 @@ export const NewApplicationForm = () => {
         </div>
 
         <div className="space-y-2 col-span-1">
-          <Label htmlFor="jobTitle">Job Title</Label>
+          <Label className="text-[#E9D8FD]" htmlFor="jobTitle">
+            Job Title
+          </Label>
           <Input
+            className="bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]"
             id="jobTitle"
             name="jobTitle"
             value={formData.jobTitle}
@@ -120,8 +129,11 @@ export const NewApplicationForm = () => {
         </div>
 
         <div className="space-y-2 col-span-1">
-          <Label htmlFor="jobUrl">Job URL</Label>
+          <Label className="text-[#E9D8FD]" htmlFor="jobUrl">
+            Job URL
+          </Label>
           <Input
+            className="bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]"
             id="jobUrl"
             name="jobUrl"
             value={formData.url}
@@ -132,9 +144,15 @@ export const NewApplicationForm = () => {
         </div>
 
         <div className="space-y-2 col-span-1 ">
-          <Label htmlFor="status">Application Status</Label>
+          <Label className="text-[#E9D8FD]" htmlFor="status">
+            Application Status
+          </Label>
           <Select value={formData.status} onValueChange={handleStatusChange}>
-            <SelectTrigger id="status" className="w-full">
+            <SelectTrigger
+              id="status"
+              className="w-full bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]
+            "
+            >
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent>
@@ -149,19 +167,24 @@ export const NewApplicationForm = () => {
         </div>
 
         <div className="space-y-2 col-span-2">
-          <Label htmlFor="notes">Job Description</Label>
+          <Label className="text-[#E9D8FD]" htmlFor="notes">
+            Job Description
+          </Label>
           <Textarea
             id="notes"
             name="notes"
             value={formData.description}
             onChange={handleChange}
             placeholder="Add any notes about this application..."
-            className="min-h-[80px]"
+            className="min-h-[80px] bg-[#1A202C] border-[#2D3748] text-white focus:border-[#6B46C1]"
           />
         </div>
       </section>
 
-      <Button type="submit" className="w-full">
+      <Button
+        type="submit"
+        className="w-full bg-[#6B46C1] hover:bg-[#553C9A] text-white"
+      >
         Save Application
       </Button>
     </form>

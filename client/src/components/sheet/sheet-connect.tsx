@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { useSheetStore } from "../../store/sheet-connect";
+import { useSheetStore } from "../../store/sheet-connect-store";
 
 export const SheetConnect = () => {
   const [url, setUrl] = useState("");
@@ -10,13 +10,16 @@ export const SheetConnect = () => {
   const handleConnect = async () => {
     if (!url.trim()) return;
     await connectSheet(url);
+    setUrl("");
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-[500px] p-6">
+    <div className="w-[700px] bg-[#171923] text-white shadow-lg flex flex-col items-center justify-center h-[500px] p-6">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold">Connect Your Sheet</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center text-[#E9D8FD]">
+            Connect Your Sheet
+          </h2>
           <p className="text-gray-500 mt-2">
             Enter your Google Sheet URL to get started
           </p>
@@ -27,6 +30,7 @@ export const SheetConnect = () => {
             <Input
               value={url}
               onChange={(e) => setUrl(e.target.value)}
+              className="bg-[#1A202C] border-[#2D3748] focus:border-[#6B46C1]"
               placeholder="https://docs.google.com/spreadsheets/d/..."
               disabled={isLoading}
             />
@@ -39,7 +43,7 @@ export const SheetConnect = () => {
 
           <Button
             onClick={handleConnect}
-            className="w-full"
+            className="w-full bg-[#6B46C1] hover:bg-[#553C9A] text-white"
             disabled={isLoading}
           >
             {isLoading ? (
