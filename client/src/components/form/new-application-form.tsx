@@ -1,32 +1,32 @@
 import React, { useState } from "react";
 import {
-  JOB_APPLICATION_PLATFORM,
   JOB_APPLICATION_RECOMMENDATION,
   JOB_APPLICATION_STATUS,
+  JOB_APPLICATION_TYPE,
+  JOB_APPLICATION_TYPE_OPTIONS,
+  JOB_STATUS_OPTIONS,
   JobApplication,
+  RECOMMENDATION_OPTIONS,
 } from "../../types";
 import { Button } from "../ui/button";
 import { FormField } from "./form-field";
 import { StatusSelect } from "./status-select";
-import {
-  JOB_STATUS_OPTIONS,
-  PLATFORM_OPTIONS,
-  RECOMMENDATION_OPTIONS,
-} from "../../types";
 
 const initialFormState: JobApplication = {
+  id: "",
   companyName: "",
   jobTitle: "",
-  url: "",
-  status: "applied",
-  notes: "",
-  appliedDate: new Date().toISOString().split("T")[0],
-  platform: "company-portal",
-  postingDate: "",
-  description: "",
-  recommendation: "no",
   location: "",
-  id: "",
+  jobType: "onsite",
+  platform: "linkedin",
+  recommendation: "no",
+  status: "applied",
+  appliedDate: new Date().toISOString().split("T")[0],
+  postingDate: "",
+  recruiterName: "",
+  recruiterLinkedInUrl: "",
+  url: "",
+  description: "",
 };
 
 export const NewApplicationForm = () => {
@@ -117,16 +117,16 @@ export const NewApplicationForm = () => {
           />
 
           <StatusSelect
-            label="Platform"
-            value={formData.platform}
+            label="Type"
+            value={formData.jobType}
             onValueChange={(value) =>
               setFormData((prev) => ({
                 ...prev,
-                platform: value as JOB_APPLICATION_PLATFORM,
+                jobType: value as JOB_APPLICATION_TYPE,
               }))
             }
-            options={PLATFORM_OPTIONS}
-            tooltip="Platform where you applied"
+            options={JOB_APPLICATION_TYPE_OPTIONS}
+            tooltip="Type of job (remote/hybrid/on-site)"
           />
 
           <FormField
@@ -136,6 +136,23 @@ export const NewApplicationForm = () => {
             value={formData.appliedDate}
             onChange={handleChange}
             tooltip="Date when you submitted your application"
+          />
+
+          <FormField
+            label="Recruiter Name"
+            name="recruiterName"
+            value={formData.recruiterName as string}
+            onChange={handleChange}
+            tooltip="Name of the recruiter"
+          />
+
+          <FormField
+            label="Recruiter LinkedIn URL"
+            name="recruiterLinkedInUrl"
+            type="url"
+            value={formData.recruiterLinkedInUrl as string}
+            onChange={handleChange}
+            tooltip="LinkedIn profile of the recruiter"
           />
 
           <FormField
@@ -155,16 +172,6 @@ export const NewApplicationForm = () => {
             type="textarea"
             className="col-span-2"
             tooltip="Job description and requirements"
-          />
-
-          <FormField
-            label="Notes"
-            name="notes"
-            value={formData.notes as string}
-            onChange={handleChange}
-            type="textarea"
-            className="col-span-2"
-            tooltip="Your personal notes about the application"
           />
         </div>
       </div>

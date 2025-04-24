@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Select,
   SelectContent,
@@ -13,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { SelectPortal } from "@radix-ui/react-select";
 
 interface StatusSelectProps {
   value: string;
@@ -52,13 +54,21 @@ export const StatusSelect = ({
         <SelectTrigger className="bg-[#1A202C] border-[#2D3748] text-white w-full">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="bg-[#1A202C] border-[#2D3748] text-white w-full">
-          {Object.entries(options).map(([key, label]) => (
-            <SelectItem key={key} value={key}>
-              {label}
-            </SelectItem>
-          ))}
-        </SelectContent>
+        <SelectPortal>
+          <SelectContent
+            className="bg-[#1A202C] border-[#2D3748] text-white w-full"
+            position="popper"
+            sideOffset={5}
+            align="start"
+            avoidCollisions={false}
+          >
+            {Object.entries(options).map(([key, label]) => (
+              <SelectItem key={key} value={key}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </SelectPortal>
       </Select>
     </div>
   );

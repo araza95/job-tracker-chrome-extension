@@ -3,15 +3,23 @@ export interface JobApplication {
   companyName: string;
   jobTitle: string;
   location: string;
-  description: string;
-  appliedDate: string;
-  postingDate: string;
+  jobType: JOB_APPLICATION_TYPE;
+  platform: JOB_APPLICATION_PLATFORM;
   recommendation: JOB_APPLICATION_RECOMMENDATION;
   status: JOB_APPLICATION_STATUS;
-  platform: JOB_APPLICATION_PLATFORM;
+  appliedDate: string;
+  postingDate: string;
+  recruiterName?: string;
+  recruiterLinkedInUrl?: string;
   url?: string;
-  notes?: string;
+  description: string;
 }
+
+export const JOB_APPLICATION_TYPE_OPTIONS = {
+  hybrid: "Hybrid",
+  remote: "Remote",
+  onsite: "Onsite",
+} as const;
 
 export const JOB_STATUS_OPTIONS = {
   interested: "Interested",
@@ -41,3 +49,4 @@ export type JOB_APPLICATION_STATUS = keyof typeof JOB_STATUS_OPTIONS;
 export type JOB_APPLICATION_PLATFORM = keyof typeof PLATFORM_OPTIONS;
 export type JOB_APPLICATION_RECOMMENDATION =
   keyof typeof RECOMMENDATION_OPTIONS;
+export type JOB_APPLICATION_TYPE = keyof typeof JOB_APPLICATION_TYPE_OPTIONS;
